@@ -38,6 +38,12 @@ const success = (request, response) => {
 
 // Bad Request Message
 const badRequest = (request, response) => {
+  // if url has parameter query, set status to 200 and message
+  if (request.url === '/badRequest?valid=true') {
+    getResponse(request, response, 200, { message: 'This request has the required parameters.' });
+    return;
+  }
+
   let responseMessage = {
     message: 'Missing valid query parameter set to true.',
     id: 'badRequest',
@@ -52,6 +58,12 @@ const badRequest = (request, response) => {
 
 // Unauthorized Message
 const unauthorized = (request, response) => {
+  // if url has parameter query, set status to 200 and message
+  if (request.url === '/unauthorized?loggedIn=yes') {
+    getResponse(request, response, 200, { message: 'You have successfully viewed the content.' });
+    return;
+  }
+
   let responseMessage = {
     message: 'Missing loggedIn query parameter set to yes.',
     id: 'unauthorized',
