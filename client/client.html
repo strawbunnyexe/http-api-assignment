@@ -5,7 +5,74 @@
   <link rel="stylesheet" type="text/css" href="/style.css">
   
   <script>
+    const handleResponse = async (response, responseType) => {
+      //Grab the content section so that we can write to it
+      const content = document.querySelector('#content');
 
+      //Based on the status of the response, write something.
+      switch(response.status) {
+        case 200: 
+          content.innerHTML = `<b>Success</b>`;
+          break;
+        case 400: 
+          content.innerHTML = `<b>Bad Request</b>`;
+          break;
+        case 401: 
+          content.innerHTML = `<b>Unauthorized</b>`;
+        break;
+        case 403: 
+          content.innerHTML = `<b>Forbidden</b>`;
+          break;
+        case 500:
+          content.innerHTML = `<b>Internal Server Error</b>`;
+        break;
+        case 501:
+          content.innerHTML = `<b>Not Implemented</b>`;
+          break;
+        default: 
+          content.innerHTML = `<b>Resource Not Found</b>`;
+          break;
+      }
+
+      // handle response message based on the type
+      if(responseType === 'text/xml'){
+        let text = await response.text();
+        content.innerHTML += `<p>Message: ${text}</p>`;
+        console.log(text);
+      }
+      else{
+        let obj = await response.json();
+        let jsonString = JSON.stringify(obj);
+        content.innerHTML += `<p>Message: ${obj.message}</p>`;
+        console.log(jsonString);
+      }
+    };
+
+    const requestUpdate = async () => {
+      // Grab the url and response type
+      const url = document.querySelector('#page').value;
+      const type = document.querySelector('#type').value;
+      
+      // Await our fetch response. Go to the URL, use the right method, and attach the headers.
+      let response = await fetch(url, {
+        method: 'get',
+        headers: {
+            'Accept': type,
+        },
+      });
+
+      handleResponse(response, type);
+    };
+
+    const init = () => {
+      // Have send button request update and response
+      const submit = document.querySelector("#send");
+      submit.onclick = () => {
+        requestUpdate();
+      };
+    };
+
+    window.onload = init;
   </script>
 </head>
 <body>
